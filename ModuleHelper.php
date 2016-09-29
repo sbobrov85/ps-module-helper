@@ -9,7 +9,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ModuleHelper
+trait ModuleHelper
 {
     private static $SETTINGS_PREFIX = '';
 
@@ -18,7 +18,7 @@ class ModuleHelper
      * @param string $settingsPrefix settings prefix
      * @throws Exception if settingsPrefix is empty
      */
-    public static function setSettingsPrefix($settingsPrefix)
+    protected static function setSettingsPrefix($settingsPrefix)
     {
         if (empty($settingsPrefix)) {
             throw new Exception('Settings prefix require non empty value!');
@@ -34,7 +34,7 @@ class ModuleHelper
      * @return string full settings key
      * @throws Exception if settings prefix not set
      */
-    public static function buildSettingsKey($paramName)
+    protected static function buildSettingsKey($paramName)
     {
         if (empty(self::$SETTINGS_PREFIX)) {
             throw new Exception('Requre settings prefix for using method!');
@@ -49,7 +49,7 @@ class ModuleHelper
      * @return mixed config value
      * @throws Exception if param name is empty
      */
-    public static function getConfigFieldValue($paramName)
+    protected static function getConfigFieldValue($paramName)
     {
         if (empty($paramName)) {
             throw new Exception('Require not empty param name!');
@@ -69,7 +69,7 @@ class ModuleHelper
      * @param mixed $value value for set, if null then read from request
      * @throws Exception if param name is empty
      */
-    public static function setConfigFieldValue($paramName, $value = null)
+    protected static function setConfigFieldValue($paramName, $value = null)
     {
         if (empty($paramName)) {
             throw new Exception('Require not empty param name!');
@@ -82,5 +82,21 @@ class ModuleHelper
         }
 
         Configuration::updateValue($settingsKey, $value);
+    }
+
+    /**
+     * Generate admin link
+     * @param bool $withToken get link with token or not (default true)
+     * @return string
+     */
+    protected function generateAdminLink($withToken = true)
+    {
+        $adminLink = $this->context->link
+            ->getAdminLink('AdminModules', $withToken)
+                .'&conf=6&configure=' . $this->name
+                .'&tab_module=' . $this->tab
+                .'&module_name=' . $this->name;
+
+        return $adminLink;
     }
 }
