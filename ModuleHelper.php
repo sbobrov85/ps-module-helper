@@ -9,7 +9,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-trait ModuleHelper
+class ModuleHelper
 {
     private static $SETTINGS_PREFIX = '';
 
@@ -18,7 +18,7 @@ trait ModuleHelper
      * @param string $settingsPrefix settings prefix
      * @throws Exception if settingsPrefix is empty
      */
-    protected static function setSettingsPrefix($settingsPrefix)
+    public static function setSettingsPrefix($settingsPrefix)
     {
         if (empty($settingsPrefix)) {
             throw new Exception('Settings prefix require non empty value!');
@@ -34,7 +34,7 @@ trait ModuleHelper
      * @return string full settings key
      * @throws Exception if settings prefix not set
      */
-    protected static function buildSettingsKey($paramName)
+    public static function buildSettingsKey($paramName)
     {
         if (empty(self::$SETTINGS_PREFIX)) {
             throw new Exception('Requre settings prefix for using method!');
@@ -49,7 +49,7 @@ trait ModuleHelper
      * @return mixed config value
      * @throws Exception if param name is empty
      */
-    protected static function getConfigFieldValue($paramName)
+    public static function getConfigFieldValue($paramName)
     {
         if (empty($paramName)) {
             throw new Exception('Require not empty param name!');
@@ -69,7 +69,7 @@ trait ModuleHelper
      * @param mixed $value value for set, if null then read from request
      * @throws Exception if param name is empty
      */
-    protected static function setConfigFieldValue($paramName, $value = null)
+    public static function setConfigFieldValue($paramName, $value = null)
     {
         if (empty($paramName)) {
             throw new Exception('Require not empty param name!');
@@ -86,16 +86,18 @@ trait ModuleHelper
 
     /**
      * Generate admin link
+     * @param ModuleCore $module module class with properties
      * @param bool $withToken get link with token or not (default true)
      * @return string
      */
-    protected function generateAdminLink($withToken = true)
+    public static function generateAdminLink(ModuleCore $module, $withToken = true)
     {
-        $adminLink = $this->context->link
-            ->getAdminLink('AdminModules', $withToken)
-                .'&conf=6&configure=' . $this->name
-                .'&tab_module=' . $this->tab
-                .'&module_name=' . $this->name;
+        $link = Context::getContext()->link;
+
+        $adminLink = $link->getAdminLink('AdminModules', $withToken)
+            .'&conf=6&configure=' . $module->name
+            .'&tab_module=' . $module->tab
+            .'&module_name=' . $module->name;
 
         return $adminLink;
     }
